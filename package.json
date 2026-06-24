@@ -1,0 +1,38 @@
+{
+  "name": "delivery-partner",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "dev": "vite --port 5175",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-navigation/native": "^7.1.14",
+    "@react-navigation/native-stack": "^7.3.21",
+    "@supabase/supabase-js": "^2.108.1",
+    "@tanstack/react-query": "^5.82.0",
+    "axios": "^1.10.0",
+    "expo": "^54.0.0",
+    "expo-av": "^16.0.8",
+    "expo-status-bar": "~3.0.9",
+    "react": "^19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "^0.81.5",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-svg": "^15.12.1",
+    "react-native-web": "^0.21.0",
+    "zustand": "^5.0.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@types/react": "~19.1.10",
+    "@vitejs/plugin-react": "^4.3.4",
+    "babel-plugin-module-resolver": "^5.0.3",
+    "babel-preset-expo": "~54.0.10",
+    "typescript": "~5.9.2",
+    "vite": "^5.4.11"
+  }
+}

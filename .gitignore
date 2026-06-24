@@ -1,0 +1,33 @@
+# Dependency directories
+node_modules/
+
+# Expo / build directories
+.expo/
+dist/
+web-build/
+
+# Native build folders (if prebuilt/generated)
+ios/
+android/
+
+# Environment files and credentials
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS and Editor configurations
+.DS_Store
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
