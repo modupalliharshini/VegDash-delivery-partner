@@ -10,6 +10,12 @@
     },
     "android": {
       "package": "com.vegdash.delivery"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0b4eec8a-20aa-45c8-8b3e-d3116d831cdd"
+      }
+    },
+    "owner": "harshinimodupalli"
   }
 }

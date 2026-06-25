@@ -288,6 +288,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ rider, onLogout, onUpdateR
   const [otpVerified, setOtpVerified] = useState(false);
   const [cashoutLoading, setCashoutLoading] = useState(false);
 
+  const [completedOrder, setCompletedOrder] = useState<any | null>(null);
+
+  const handleCloseCompletionScreen = () => {
+    setCompletedOrder(null);
+    setDeliveryStage('to_store');
+    setProgress(0);
+  };
+
   const progressRef = useRef(0);
   const progressIntervalRef = useRef<any>(null);
   const alertTimerRef = useRef<any>(null);
@@ -665,15 +673,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ rider, onLogout, onUpdateR
                 if (error) throw error;
 
                 console.log('Auto-delivered order in testing/mock mode.');
+                setWalletBalance(w => w + 50);
+                fetchHistory();
                 setActiveOrder((prev: any) => {
                   if (prev && prev._id === currentOrderId) {
-                    setWalletBalance(w => w + 50);
-                    setDeliveryStage('to_store');
-                    setProgress(0);
-                    fetchHistory();
-                    return null;
+                    setCompletedOrder(prev);
                   }
-                  return prev;
+                  return null;
                 });
               } catch (err: any) {
                 console.error('Failed auto-delivering order:', err.message);
@@ -963,10 +969,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ rider, onLogout, onUpdateR
               if (error) throw error;
 
               Alert.alert('Delivered! 🏆', 'Great job! ₹50 added to your wallet.');
+              setCompletedOrder(activeOrder);
               setActiveOrder(null);
               setWalletBalance(prev => prev + 50);
-              setDeliveryStage('to_store');
-              setProgress(0);
               fetchHistory();
             } catch (err: any) {
               Alert.alert('Error', 'Failed to complete delivery: ' + err.message);
@@ -1144,7 +1149,40 @@ export const Dashboard: React.FC<DashboardProps> = ({ rider, onLogout, onUpdateR
             </View>
 
             {/* Active Delivery Flow Manager */}
-            {activeOrder ? (
+            {completedOrder ? (
+              <View style={styles.completedOrderCard}>
+                <View style={styles.successIconCircle}>
+                  <Text style={{ fontSize: 44 }}>🏆</Text>
+                </View>
+                <Text style={styles.completedTitle}>Order Delivered!</Text>
+                <Text style={styles.completedSubtitle}>Fantastic job, partner! You've completed the delivery sequence.</Text>
+                
+                <View style={styles.completedSummaryCard}>
+                  <View style={styles.completedRow}>
+                    <Text style={styles.completedLabel}>Order ID</Text>
+                    <Text style={styles.completedValue}>VD-{completedOrder._id.substring(18).toUpperCase()}</Text>
+                  </View>
+                  <View style={styles.divider} />
+                  <View style={styles.completedRow}>
+                    <Text style={styles.completedLabel}>Store</Text>
+                    <Text style={styles.completedValue}>{getRestaurantName(completedOrder.restaurant)}</Text>
+                  </View>
+                  <View style={styles.completedRow}>
+                    <Text style={styles.completedLabel}>Customer Address</Text>
+                    <Text style={styles.completedValue} numberOfLines={1}>{completedOrder.deliveryAddress?.street || 'Customer Address'}</Text>
+                  </View>
+                  <View style={styles.divider} />
+                  <View style={styles.completedRow}>
+                    <Text style={styles.completedLabel}>Earnings Credited</Text>
+                    <Text style={[styles.completedValue, { color: theme.colors.success, fontWeight: '800' }]}>+₹50.00</Text>
+                  </View>
+                </View>
+
+                <TouchableOpacity style={[styles.largePrimaryBtn, { width: '100%' }]} onPress={handleCloseCompletionScreen}>
+                  <Text style={styles.largePrimaryBtnText}>Continue to Dashboard</Text>
+                </TouchableOpacity>
+              </View>
+            ) : activeOrder ? (
               <View style={[styles.card, { borderLeftWidth: 4, borderLeftColor: theme.colors.primaryGreen }]}>
                 <View style={styles.activeOrderHeader}>
                   <Text style={styles.activeOrderTitle}>🏍️ ACTIVE DELIVERY TASK</Text>
@@ -1971,5 +2009,14 @@ const styles = StyleSheet.create({
   pickupCodeContainer: { backgroundColor: 'rgba(255, 152, 0, 0.05)', borderWidth: 1, borderColor: 'rgba(255, 152, 0, 0.3)', padding: 14, borderRadius: 12, alignItems: 'center', marginBottom: 16 },
   pickupCodeLabel: { fontSize: 9, fontWeight: '800', color: '#FF9800', letterSpacing: 1, marginBottom: 4 },
   pickupCodeVal: { fontSize: 24, fontWeight: '900', color: theme.colors.primaryText, letterSpacing: 2 },
-  pickupCodeSub: { fontSize: 10, color: theme.colors.secondaryText, marginTop: 4, textAlign: 'center' }
+  pickupCodeSub: { fontSize: 10, color: theme.colors.secondaryText, marginTop: 4, textAlign: 'center' },
+  
+  completedOrderCard: { backgroundColor: theme.colors.card, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 20, padding: 24, alignItems: 'center', shadowColor: theme.colors.primaryGreen, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3, marginVertical: 10 },
+  successIconCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(199, 169, 107, 0.15)', justifyContent: 'center', alignItems: 'center', marginBottom: 16, borderWidth: 1, borderColor: 'rgba(199, 169, 107, 0.3)' },
+  completedTitle: { fontSize: 22, fontWeight: '900', color: theme.colors.primaryGreen, marginBottom: 8, fontFamily: 'Outfit', textAlign: 'center' },
+  completedSubtitle: { fontSize: 13, color: theme.colors.secondaryText, textAlign: 'center', marginBottom: 24, lineHeight: 20 },
+  completedSummaryCard: { width: '100%', backgroundColor: theme.colors.warmWhite, borderRadius: 14, padding: 16, marginBottom: 24, borderWidth: 1, borderColor: '#E8E4DC' },
+  completedRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8 },
+  completedLabel: { fontSize: 12, color: theme.colors.secondaryText, fontWeight: '600' },
+  completedValue: { fontSize: 13, color: theme.colors.primaryText, fontWeight: '700' }
 });
